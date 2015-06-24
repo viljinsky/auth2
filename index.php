@@ -152,27 +152,30 @@
             $exit_form = filter_input(INPUT_POST, 'exit');
             if (!empty($exit_form)){
                 session_unset();
-                header('Location: /auth2/');
+                header('Location: ./');
             }
             
         
         ?>
     
-        <?php
-            if (isset($_SESSION['user_id'])){
-                $user_name=$_SESSION['user_name'];
-                $str = "<form method='post'>$user_name<input type='submit' name='exit' value='выход'></form>";
-                echo $str;
-            }
-        ?>
     
     
     
 	<h1>Форма аутентификации</h1>
 	
 	<nav>
-            <a href="#" onclick="showLoginForm('login_form');">Войти</a>
-            <a href="#" onclick="showLoginForm('register_form');">Регистрация</a>
+        <?php
+            if (isset($_SESSION['user_id'])){
+                $user_name=$_SESSION['user_name'];
+                $str = "<form method='post'>$user_name<input type='submit' name='exit' value='выход'></form>";
+                echo $str;
+            } else { ?>
+                 <a href="#" onclick="showLoginForm('login_form');">Войти</a>
+                <a href="#" onclick="showLoginForm('register_form');">Регистрация</a>
+            
+         <?php } ?>
+            
+            
             <a href="#" onclick="showLoginForm('message_form');">Сообщение</a>
 	</nav>
         
