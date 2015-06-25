@@ -21,9 +21,10 @@
     $password = filter_input(INPUT_POST, 'password');
     $err = getUserName($login, $password);
     if (!empty($err)){
-        echo $err;
+        $_SESSION['message']=$err;
     } else {
-        header('Location: ./');        
+        unset($_SESSION['message']);
     }
+     header('Location: ./');        
 
 ?>

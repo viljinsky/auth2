@@ -36,9 +36,10 @@
     }
     $err = createUser($last_name, $first_name, $login, $password1, $email);
     if (!empty($err)){
-        echo $err;
+        $_SESSION['message']=$err;
     } else {
-        header('Location: ./');
+        unset($_SESSION['message']);
     }
+    header('Location: ./');
     
 ?>

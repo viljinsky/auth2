@@ -9,9 +9,10 @@
         $subject=filter_input (INPUT_POST,'subject');
         $email=filter_input (INPUT_POST,'email');
         $message=filter_input (INPUT_POST,'message');
-        echo 'Сообщение отпралено';
+        $_SESSION['message']= 'Сообщение отпралено';
     } else {
-        echo 'Неверный введено число ***'.$secret.'***';
+        $_SESSION['message']= 'Неверно введено число';
     }
+    header('Location: ./');
 ?>
 
