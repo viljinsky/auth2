@@ -23,6 +23,18 @@
         padding:20px;
         z-index:1002;
     }
+    
+    .restore_form {
+        display:none;
+        background:#f0f0f0;
+        position:relative;
+        width:400px;
+        margin:0 auto;
+        border:1px solid black;
+        padding:20px;
+        z-index:1002;
+        
+    }
 
     .message_form {
         display:none;
@@ -34,7 +46,7 @@
     .sysmessage {
         /*display: none;*/
         padding:40px;
-        border:1px solid black; width:50%;background: #fff;position: absolute; top: 100px;left:100px ;}
+        border:1px solid black; width:50%;background: #fff;position: fixed; top:40px;left:150px;}
     .message_form table input,.message_form table textarea {width:100%;}
 
     .fade_overlay {
@@ -44,6 +56,14 @@
         background: #000;
         opacity: 0.3;
         z-index: 1001;
+    }
+    .btn_close{
+        width:30px;heigh:30px;
+        display:block;
+/*        position: relative;
+        top:5px;right:5px;*/
+        background: #ccc;
+        text-indent: -49999px;
     }
 
     </style>
@@ -65,8 +85,10 @@
     
     <?php  if (isset($_SESSION['message'])){
         $str='<div class="sysmessage" id="sysmessage">'
-            .$_SESSION['message'].'<br>'    
-            .'<button onclick="hideForm(\'sysmessage\')")>Закрыть</button>'    
+            .'<a href="#" class="btn_close">Закрыть</a>'    
+            .'<p>Sysmessage</p>'
+            .$_SESSION['message']
+            .'<p><button onclick="hideForm(\'sysmessage\')")>Закрыть</button></p>'    
             .'</div>';
         echo $str;
     }
@@ -93,14 +115,6 @@
         <a href="#" onclick="showForm('message_form');">Сообщение</a>
     </nav>
 
-<!--    <div class="sysmessage" id="sysmessage">
-        <?php 
-            if(isset($_SESSION['message'])){ 
-                echo $_SESSION['message'];
-            }
-        ?><br>
-        <button onclick="hideForm('sysmessage')">Зарыть</button>
-    </div>-->
     
     <!--            Вход в систему                                       -->
 
@@ -109,7 +123,7 @@
         <input type="text" name="login" placeholder="логин">
         <input type="password" name="password" placeholder="пароль"><br>
 
-        <a href="#">Напомнить пароль</a><br>
+        <a href="#" onclick="hideForm('login_form'); showForm('restore_form');" >Напомнить пароль</a><br>
         <div style="position:relative;height:40px">
             <div style="position:absolute;right: 0;bottom: 0;">
             <input type="submit" value="войти">
@@ -119,8 +133,18 @@
 
     <!--              Форма регистрации                                  -->
 
+    <?php 
+        $alpha ="0123456789";
+        $secret = ""; 
+        for($i=0;$i<5;$i++) {
+            $secret.= $alpha[rand(0,strlen($alpha)-1)]; 
+        }
+        session_id(md5(microtime()*rand())); 
+        $_SESSION['secret']=$secret;
+
+    ?>
     <form class="register_form" id="register_form" method="post" action="register.php">
-        Регисрация: <br>
+        <b>Регистрация:</b> <br>
         <table>
             <tr>
                 <td>Фамилия</td>
@@ -140,6 +164,9 @@
             </tr><tr>
                 <td>Пароль(ещё раз)</td>
                 <td><input type="password" name="password2"></td>
+            </tr><tr>
+                <td><img src="captcha.php?sid=<?= session_id(); ?>" alt="captcha"></td>
+                <td><input type="text" name="secret"></td>
             </tr>
         </table>
         <div style="position:relative;height:30px;">
@@ -152,16 +179,6 @@
 
     <!---      Форма отправки сообщения                                 -->
 
-    <?php 
-        $alpha ="0123456789";
-        $secret = ""; 
-        for($i=0;$i<5;$i++) {
-            $secret.= $alpha[rand(0,strlen($alpha)-1)]; 
-        }
-        session_id(md5(microtime()*rand())); 
-        $_SESSION['secret']=$secret;
-
-    ?>
     <form id="message_form" class="message_form" action="message.php" method="post">
         <table align="center" width="100%">
                 <tr>
@@ -194,6 +211,17 @@
                         <input type="button" value="Закрыть" onclick="hideForm('message_form');">
                 </div>
         </div>
+    </form>
+    
+    <form id="restore_form" class="restore_form" action="restore.php" method="post">
+        <b>Восстановление входа </b>
+        <p>
+        <input type="text" name="login" placeholder="логин">
+        <input type="text" name="email" placeholder="email">
+        </p>
+        <p>
+        <input type="submit" value="восстановить">
+        </p>
     </form>
 
     <div id="fade" class="fade_overlay"></div>

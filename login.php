@@ -2,8 +2,10 @@
     session_start();
     include_once './db.php';
     
+    
     function getUserName($login,$password){
-        $query = "select user_id,first_name,last_name from users where login='$login' and pwd='$password'";
+        $pwd = md5($password.'Vh1MTV100');
+        $query = "select user_id,first_name,last_name from users where login='$login' and pwd='$pwd'";
         $result=  mysql_query($query);
         if (!$result or mysql_num_rows($result)<>1){
             return 'Пользователь не найден или неверный пароль';
