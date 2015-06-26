@@ -11,7 +11,7 @@
 
     function checkUserName(){
         global $first_name,$last_name;
-        $p = '/^[a-zA-Zа-яА-ЯёЁ]+$/';
+        $p = '/[a-zA-Zа-яА-Я]+/';
         if (!preg_match($p,$first_name)){
                 return "Имя и фамилия могут состоять только из букв";
         }    
@@ -91,8 +91,8 @@
     function createUser(){
         global $last_name,$first_name,$login,$password1,$email;
         $pwd = md5($password1.'Vh1MTV100');
-        $query="insert into users (last_name,first_name,login,pwd,email)"
-                ."values('$last_name','$first_name','$login','$pwd','$email')";
+        $query="insert into users (last_name,first_name,login,pwd,email)
+                values('$last_name','$first_name','$login','$pwd','$email')";
         $result = mysql_query($query);
 
         if (!empty($err)){
@@ -114,14 +114,5 @@
         $_SESSION['message']=$err;
     }
     header('Location: ./');
-    
-    
-
-//    $err = createUser($last_name, $first_name, $login, $password1, $email);
-//    if (!empty($err)){
-//        $_SESSION['message']=$err;
-//    } else {
-//        unset($_SESSION['message']);
-//    }
     
 ?>
