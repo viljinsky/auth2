@@ -3,74 +3,47 @@
 <html lang="ru">
 <head>
     <style>
-    .login_form{
+    .dialog_form{
         display: none;
         border: 1px solid black;
         background: #f0f0f0;
-        position:relative;
+        position:fixed;
         width:400px;
         margin: 0 auto;
         padding:20px;
         z-index: 1002;
     }
-    .register_form {
-        display:none;
-        background:#f0f0f0;
-        position:relative;
-        width:400px;
-        margin:0 auto;
-        border:1px solid black;
-        padding:20px;
-        z-index:1002;
-    }
-    
-    .restore_form {
-        display:none;
-        background:#f0f0f0;
-        position:relative;
-        width:400px;
-        margin:0 auto;
-        border:1px solid black;
-        padding:20px;
-        z-index:1002;
         
-    }
-
-    .message_form {
-        display:none;
-        position:relative;margin:0 auto;max-width:500px;
-        border:1px solid black;padding:10px;
-        background:#f0f0f0;
-        z-index:1002;
-    }
-    .sysmessage {
-        /*display: none;*/
-        padding:40px;
-        border:1px solid black; width:50%;background: #fff;position: fixed; top:40px;left:150px;}
+    #message_form input{width:100%;}
+    #message_form textArea{width:100%;}
     .message_form table input,.message_form table textarea {width:100%;}
 
     .fade_overlay {
         display: none;
-        position: absolute;
+        position: fixed;
         left: 0;top:0;width:100%;height: 100%;
         background: #000;
         opacity: 0.3;
         z-index: 1001;
     }
     .btn_close{
-        width:30px;heigh:30px;
         display:block;
-/*        position: relative;
-        top:5px;right:5px;*/
-        background: #ccc;
-        text-indent: -49999px;
+        position: absolute;
+        right: 5px;
+        top: 5px;
     }
 
     </style>
     
     <script >
         function showForm(form_name){
-            document.getElementById(form_name).style.display='block';
+            var form =  document.getElementById(form_name);
+            form.style.display='block';
+            var html = document.documentElement;
+            var w = html.clientWidth;
+            form.style.left=(w-form.clientWidth)/2+'px';
+            var h = html.clientHeight;
+            form.style.top=(h-form.clientHeight)/2+'px';
             document.getElementById('fade').style.display='block';
         }
 
@@ -84,29 +57,27 @@
 <body>
     
     <?php  if (isset($_SESSION['message'])){
-        $str='<div class="sysmessage" id="sysmessage">'
-            .'<a href="#" class="btn_close">Закрыть</a>'    
-            .'<p>Sysmessage</p>'
+        $str='<form class="dialog_form" id="sysmessage">'
+            .'<a href="#" class="btn_close" onclick="hideForm(\'sysmessage\');">Закрыть</a>'    
+            .'<p>Ошибка</p>'
             .$_SESSION['message']
-            .'<p><button onclick="hideForm(\'sysmessage\')")>Закрыть</button></p>'    
-            .'</div>';
+            .'</form>';
         echo $str;
+        ?><script> showForm("sysmessage")</script><?php
     }
     ?>
+    
     
     <header>
     <h1>Фреймворк аутендификации</h1>
 
     
-    <nav>
+    <nav style="padding:40px;">
     <?php
         if (isset($_SESSION['user_id'])){
-            $user_name=$_SESSION['user_name'];
-            $str = "<form method='post' action='logout.php'>"
-                  ."$user_name<input type='submit'  value='выход'>"
-                  ."</form>";
-            echo $str;
-        } else { ?>
+            echo 'Здравствуйте, '.$_SESSION['user_name'];
+            ?> <a href="logout.php">Выйти</a>   <?php
+    }  else { ?>
             <a href="#" onclick="showForm('login_form');">Войти</a>
             <a href="#" onclick="showForm('register_form');">Регистрация</a>
 
@@ -121,6 +92,7 @@
     <article>
         Бла бла бла бла бла бла бла бла бла бла бла бла бла
          бла бла бла бла бла бла бла бла
+         <!--<img src="screenshort1.png" alt="">-->
     </article>
 
     <footer>
@@ -129,7 +101,8 @@
     
     <!--            Вход в систему                                       -->
 
-    <form class="login_form" id="login_form" method="post" action="login.php">
+    <form class="dialog_form" id="login_form" method="post" action="login.php">
+        <a class="btn_close" href="#" onclick="hideForm('login_form');">Закрыть</a>
         Вход:<br>
         <input type="text" name="login" placeholder="логин">
         <input type="password" name="password" placeholder="пароль"><br>
@@ -154,16 +127,11 @@
         $_SESSION['secret']=$secret;
 
     ?>
-    <form class="register_form" id="register_form" method="post" action="register.php">
+    <form class = "dialog_form" id = "register_form" method = "post" action = "register.php">
+        <a class="btn_close" href="#" onclick="hideForm('register_form');">Закрыть</a>
         <b>Регистрация:</b> <br>
         <table>
             <tr>
-                <td>Фамилия</td>
-                <td><input type="text" name="last_name"></td>
-            </tr><tr>
-                <td>Имя</td>
-                <td><input type="text" name="first_name"></td>
-            </tr><tr>
                 <td>Логин</td>
                 <td><input type="text" name="login"></td>
             </tr><tr>
@@ -176,6 +144,12 @@
                 <td>Пароль(ещё раз)</td>
                 <td><input type="password" name="password2"></td>
             </tr><tr>
+                <td>Фамилия</td>
+                <td><input type="text" name="last_name"></td>
+            </tr><tr>
+                <td>Имя</td>
+                <td><input type="text" name="first_name"></td>
+            </tr><tr>
                 <td><img src="captcha.php?sid=<?= session_id(); ?>" alt="captcha"></td>
                 <td><input type="text" name="secret"></td>
             </tr>
@@ -183,14 +157,14 @@
         <div style="position:relative;height:30px;">
             <div style="display:block;position:absolute;right:0;bottom:0;">
                     <input type="submit" value="Зарегистрировать">
-                    <input type="button" value="Закрыть" onclick="hideForm('register_form');">
             </div>
         </div>
     </form>
 
     <!---      Форма отправки сообщения                                 -->
 
-    <form id="message_form" class="message_form" action="message.php" method="post">
+    <form class = "dialog_form" id = "message_form" action = "message.php" method="post">
+        <a class="btn_close" href="#" onclick="hideForm('message_form');">Закрыть</a>
         <table align="center" width="100%">
                 <tr>
                         <td colspan="2">Тема сообщения </td>
@@ -219,12 +193,13 @@
         <div style="position:relative;height:30px;">
                 <div style="display:block; position:absolute;right:0;bottom:0;">
                         <input type="submit" value="Отправить" >
-                        <input type="button" value="Закрыть" onclick="hideForm('message_form');">
+                        <!--<input type="button" value="Закрыть" onclick="hideForm('message_form');">-->
                 </div>
         </div>
     </form>
     
-    <form id="restore_form" class="restore_form" action="restore.php" method="post">
+    <form class="dialog_form" id="restore_form" action="restore.php" method="post">
+        <a class="btn_close" href="#" onclick="hideForm('restore_form');">Закрыть</a>
         <b>Восстановление входа </b>
         <p>
         <input type="text" name="login" placeholder="логин">

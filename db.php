@@ -14,7 +14,6 @@
     }
     
     function createUsresTable(){
-        global $users;
         $query = "drop table if exists users;
           create table users(
 	  user_id integer not null primary key auto_increment,
