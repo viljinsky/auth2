@@ -3,6 +3,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <title>Аутентификация</title>
     <style>
         body{margin: 0;}
         header,footer{background: #6699cc;padding: 10px;}
@@ -102,7 +103,7 @@
             <nav style="position:absolute;right: 10px;">
             <?php
                 if (isset($_SESSION['user_id'])){
-                    echo 'Здравствуйте, '.$_SESSION['user_name'];
+                    echo 'Здравствуйте, '.$_SESSION['user_name'].' '.$_SESSION['user_id'];
                     ?> <a href="logout.php">Выход</a>   <?php
             }  else { ?>
                     <a href="#" onclick="showForm('login_form');">Вход</a>
@@ -114,7 +115,7 @@
             </nav>
         </div>    
         
-        <h1>Фреймворк аутендификации</h1>
+        <h1>Аутентификации</h1>
         
         <nav>
             <a href="#">Главная</a>

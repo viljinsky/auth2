@@ -9,80 +9,67 @@
     $password1 =  filter_input(INPUT_POST, 'password1');
     $password2 =  filter_input(INPUT_POST, 'password2');
 
-    function checkUserName(){
-        global $first_name,$last_name;
+    function validUserName($first_name,$last_name){
         $p = '/[a-zA-Zа-яА-ЯёЁ]+/';
-        if (!preg_match($p,$first_name)){
-                return "Имя и фамилия могут состоять только из букв";
-        }    
+        return (preg_match($p,$first_name) && preg_match($p, $last_name));
     }
     
-    function checkLogin(){
-        global $login;
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $login)){
-            return 'Логин должен состоять только из букв латинского алфавиа цыфр и подчерка';
-        }
-        
+    function validLogin($login){
+        return preg_match('/^[a-zA-Z0-9_]{3,25}$/', $login);
     }
     
-    function userExists(){
-        global $login,$email;
+    function userExists($login,$email){
         $query="select user_id from users where login='$login' or email='$email'";
         $result=  mysql_query($query);
-        if (mysql_num_rows($result)>0){
-            return 'Такой логин или email уже существует.';
-        }
+        return mysql_num_rows($result)>0;
     }
     
-    function checkPassword(){
-        global $password1,$password2;
-        if ($password1<>$password2){
-            return 'Пароль на совпадает';
-        }
-        
-    }
-    
-    function checkEmail(){
-        global $email;
-        if (!preg_match('/\w[0-9a-zA-Z]+@[0-9a-zA-Z]+\.[a-zA-Z]{2,3}/', $email)){
-            return 'Адрес неверный ->'.$email;
-        };
+    function validEmail($email){
+        return preg_match('/\w[0-9a-zA-Z]+@[0-9a-zA-Z]+\.[a-zA-Z]{2,3}/', $email);
     }
     
     function checkForm(){
         global $first_name,$last_name,$login,$password1,$password2,$email;
         
-        if (filter_input(INPUT_POST,'secret')<>$_SESSION['secret']){
-            return 'Неверно указано число с картинки';
-        }
+        try {
+            $secret = filter_input(INPUT_POST,'secret');
+
+            if (empty($last_name) 
+                    || empty($first_name) 
+                    || empty($login) 
+                    || empty($password1) 
+                    || empty($password2) 
+                    || empty($email)
+                    || empty($secret)){
+                throw new Exception('Нужно заполнить  все поля');
+            }
+            
+            if (!validLogin($login)){
+                throw new Exception('Логин должен состоять из не мене 3-х букв латинского алфавиа цыфр и подчерка');
+            }
+            
+            if (!validEmail($email)){
+                throw new Exception('Неправильный email');
+            }
+            
+            if ($password1<>$password1){
+                throw new Exception('Пароли не совпадают');
+            }
+            
+            if (!validUserName($first_name,$last_name)){
+                throw new Exception('Имя и фамилия могут состоять только из букв');
+            }
+
+            if (userExists($login,$email)){
+                throw new Exception( 'Такой логин или email уже существует.');
+            }
+
+            if ($secret<>$_SESSION['secret']){
+                throw new Exception('Неверно указано число с картинки');
+            }
         
-        if (empty($last_name) 
-                || empty($first_name) 
-                || empty($login) 
-                || empty($password1) 
-                || empty($password2) 
-                || empty($email)){
-            return 'Нужно заполнить  все поля';
-        }
-        
-        $err = checkUserName();
-        if (!empty($err)){
-            return $err;
-        }
-        
-        $err=  checkLogin();
-        if (!empty($err)){
-            return $err;
-        }
-        
-        $err = checkEmail();
-        if (!empty($err)){
-            return $err;
-        }
-        
-        $err = userExists();
-        if (!empty($err)){
-            return $err;
+        } catch (Exception $exc){
+            return $exc->getMessage();
         }
         
         
@@ -99,10 +86,12 @@
             return $err;
         }
 
-
         if (!$result || mysql_affected_rows()<1){
             return 'Ошибка при записи'.mysql_error();
         }
+        
+        $_SESSION['user_id'] =  mysql_insert_id();
+        $_SESSION['user_name'] = $last_name.' '.$first_name;
     }
     
     unset($_SESSION['message']);
