@@ -3,14 +3,17 @@
     $db_user ='root';
     $db_password='root';
     $database = 'test';
+    $topsecret = 'Vh1MTV100';
 
     $db = mysql_connect($db_host,$db_user,$db_password);
     if (!$db){
-        echo 'Ошибка подключения'. mysql_error();
+        echo 'Ошибка подключения';
+        exit();
     }
     $link=  mysql_select_db($database);
     if(!$link){
-        echo 'Ошибка базы данных'.  mysql_error();
+        echo 'Ошибка базы данных';
+        exit();
     }
     
     function createUsresTable(){

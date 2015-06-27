@@ -2,7 +2,16 @@
 <?php session_start(); ?>
 <html lang="ru">
 <head>
+    <meta charset="UTF-8">
     <style>
+        body{margin: 0;}
+        header,footer{background: #6699cc;padding: 10px;}
+        article{background: #fff;margin: 30px auto;width:70%;padding: 20px;  box-shadow: 0 0 10px rgba(0,0,0,0.5);}
+        nav a{text-decoration: none;color:#fff;}
+        nav a:hover{text-decoration: underline;}
+        
+        
+        
     .dialog_form{
         display: none;
         border: 1px solid black;
@@ -32,6 +41,14 @@
         right: 5px;
         top: 5px;
     }
+    
+    .btn_group{
+        height:30px;
+    }
+    
+    .btn_group .buttons {
+        display: inline;position: absolute;right: 10px;bottom: 10px;        
+    }
 
     </style>
     
@@ -51,12 +68,22 @@
             document.getElementById(form_name).style.display='none';
             document.getElementById('fade').style.display='none';
         }
+        
+        function checkLink(link){
+            <?php if (isset($_SESSION['user_id'])) { ?>
+                window.location.href = link;    
+            <?php } else { ?>
+                alert('Необходимо авторизоваться');
+            <?php }?>
+        }
 
     </script>
 </head>
 <body>
-    
-    <?php  if (isset($_SESSION['message'])){
+   
+    <?php 
+        include_once './db.php';
+        if (isset($_SESSION['message'])){
         $str='<form class="dialog_form" id="sysmessage">'
             .'<a href="#" class="btn_close" onclick="hideForm(\'sysmessage\');">Закрыть</a>'    
             .'<p>Ошибка</p>'
@@ -69,34 +96,54 @@
     
     
     <header>
-    <h1>Фреймворк аутендификации</h1>
 
     
-    <nav style="padding:40px;">
-    <?php
-        if (isset($_SESSION['user_id'])){
-            echo 'Здравствуйте, '.$_SESSION['user_name'];
-            ?> <a href="logout.php">Выйти</a>   <?php
-    }  else { ?>
-            <a href="#" onclick="showForm('login_form');">Войти</a>
-            <a href="#" onclick="showForm('register_form');">Регистрация</a>
+        <div style="height:30px;" >
+            <nav style="position:absolute;right: 10px;">
+            <?php
+                if (isset($_SESSION['user_id'])){
+                    echo 'Здравствуйте, '.$_SESSION['user_name'];
+                    ?> <a href="logout.php">Выход</a>   <?php
+            }  else { ?>
+                    <a href="#" onclick="showForm('login_form');">Вход</a>
+                    <a href="#" onclick="showForm('register_form');">Регистрация</a>
+             <?php } ?>
 
-     <?php } ?>
 
-
-        <a href="#" onclick="showForm('message_form');">Сообщение</a>
-    </nav>
+                <a href="#" onclick="showForm('message_form');">Сообщение</a>
+            </nav>
+        </div>    
+        
+        <h1>Фреймворк аутендификации</h1>
+        
+        <nav>
+            <a href="#">Главная</a>
+            <a href="#" onclick="checkLink('http://www.yandex.ru');">Загрузить</a>
+            <a href="#">Примеры</a>
+        </nav>
     
     </header>
     
     <article>
+        <section>
+        <h1>Бла бла бла бла бла</h1>
         Бла бла бла бла бла бла бла бла бла бла бла бла бла
          бла бла бла бла бла бла бла бла
-         <!--<img src="screenshort1.png" alt="">-->
+        </section>
+        <section>
+        <h1>Бла бла бла бла бла</h1>
+        Бла бла бла бла бла бла бла бла бла бла бла бла бла
+         бла бла бла бла бла бла бла бла
+        </section>
+        <section>
+        <h1>Бла бла бла бла бла</h1>
+        Бла бла бла бла бла бла бла бла бла бла бла бла бла
+         бла бла бла бла бла бла бла бла
+        </section>
     </article>
 
     <footer>
-        &copy; Ильинский В.В.
+        &copy; 2015, Ильинский В.В.
     </footer>
     
     <!--            Вход в систему                                       -->
@@ -108,11 +155,11 @@
         <input type="password" name="password" placeholder="пароль"><br>
 
         <a href="#" onclick="hideForm('login_form'); showForm('restore_form');" >Напомнить пароль</a><br>
-        <div style="position:relative;height:40px">
-            <div style="position:absolute;right: 0;bottom: 0;">
-            <input type="submit" value="войти">
+        <div class="btn_group">
+            <div class="buttons">
+                <input type="submit" value="войти">            
             </div>
-        </div>
+        </div>    
     </form>
 
     <!--              Форма регистрации                                  -->
@@ -150,15 +197,17 @@
                 <td>Имя</td>
                 <td><input type="text" name="first_name"></td>
             </tr><tr>
+                <td>Введите число</td><td>&nbsp;</td>
+            </tr><tr>
                 <td><img src="captcha.php?sid=<?= session_id(); ?>" alt="captcha"></td>
                 <td><input type="text" name="secret"></td>
             </tr>
         </table>
-        <div style="position:relative;height:30px;">
-            <div style="display:block;position:absolute;right:0;bottom:0;">
-                    <input type="submit" value="Зарегистрировать">
+        <div class="btn_group">
+            <div class="buttons">
+                <input type="submit" value="Зарегистрировать">            
             </div>
-        </div>
+        </div>    
     </form>
 
     <!---      Форма отправки сообщения                                 -->
@@ -190,24 +239,24 @@
                 </tr>
         </table>
 
-        <div style="position:relative;height:30px;">
-                <div style="display:block; position:absolute;right:0;bottom:0;">
-                        <input type="submit" value="Отправить" >
-                        <!--<input type="button" value="Закрыть" onclick="hideForm('message_form');">-->
-                </div>
-        </div>
+        <div class="btn_group">
+            <div class="buttons">
+                <input type="submit" value="Отправить" >            
+            </div>
+        </div>    
     </form>
     
     <form class="dialog_form" id="restore_form" action="restore.php" method="post">
         <a class="btn_close" href="#" onclick="hideForm('restore_form');">Закрыть</a>
         <b>Восстановление входа </b>
         <p>
-        <input type="text" name="login" placeholder="логин">
-        <input type="text" name="email" placeholder="email">
+        <input type="text" name="word" placeholder="логин или email">
         </p>
-        <p>
-        <input type="submit" value="восстановить">
-        </p>
+        <div class="btn_group">
+            <div class="buttons">
+                <input type="submit" value="восстановить">
+            </div>
+        </div>
     </form>
 
     <div id="fade" class="fade_overlay"></div>

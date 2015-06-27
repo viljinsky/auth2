@@ -89,8 +89,8 @@
     }
 
     function createUser(){
-        global $last_name,$first_name,$login,$password1,$email;
-        $pwd = md5($password1.'Vh1MTV100');
+        global $topsecret,$last_name,$first_name,$login,$password1,$email;
+        $pwd = md5($password1.$topsecret);
         $query="insert into users (last_name,first_name,login,pwd,email)
                 values('$last_name','$first_name','$login','$pwd','$email')";
         $result = mysql_query($query);

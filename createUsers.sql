@@ -1,4 +1,4 @@
-use test;
+use vh237706_timegrid;
 drop table if exists users;
 create table users(
     user_id integer not null primary key auto_increment,
