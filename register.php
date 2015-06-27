@@ -11,7 +11,7 @@
 
     function checkUserName(){
         global $first_name,$last_name;
-        $p = '/[a-zA-Zа-яА-Я]+/';
+        $p = '/[a-zA-Zа-яА-ЯёЁ]+/';
         if (!preg_match($p,$first_name)){
                 return "Имя и фамилия могут состоять только из букв";
         }    

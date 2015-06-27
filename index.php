@@ -216,13 +216,17 @@
         <a class="btn_close" href="#" onclick="hideForm('message_form');">Закрыть</a>
         <table align="center" width="100%">
                 <tr>
-                        <td colspan="2">Тема сообщения </td>
+                        <td colspan="2">Тема</td>
                 </tr><tr>
-                        <td colspan="2"><input type="text" name="subject"></td>
+                    <td colspan="2"><input type="text" name="subject" 
+                                           placeholder="Укажите тему (вопрос,пожелание, предложение и т.п.)">
+                    </td>
                 </tr><tr>
                         <td>Текст сообщения</td>
                 </tr><tr>
-                        <td colspan="2"><textarea cols="50" rows="12" name="message"></textarea></td>
+                    <td colspan="2"><textarea cols="50" rows="5" name="message" 
+                                              placeholder="Кратко изложите суть сообщения"></textarea>
+                    </td>
                 </tr><tr>
                         <td>Ваше имя </td><td><input type="text" name="user_name"></td>
                 </tr><tr>

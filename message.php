@@ -1,5 +1,6 @@
 <?php
-    session_start();
+
+session_start();
     include_once './db.php';
     
     $user_name=  filter_input (INPUT_POST,'user_name');
@@ -13,18 +14,41 @@
     $headers ='Content-type: text; charset="utf-8"'."\r\n"
                     .'From: '.$user_name.'<'.$email.'>';
     
-//    echo $to.''.$subject.''.$message.''.$headers;
+    function checkEmail($email){
+        return preg_match('/\w[0-9a-zA-Z]+@[0-9a-zA-Z]+\.[a-zA-Z]{2,3}/', $email);
+    }
     
-    if ($secret==$_SESSION['secret']){
-        if (mail($to,$subject,$message,$headers)){
-            $_SESSION['message']= 'Сообщение отпралено';
-        } else {
-            $_SESSION['message']='Уппс.Проблема с почтой.Сообщение не отправлено';
+    function checkUserName($user_name){
+        return preg_match('/[a-zA-Zа-яА-ЯёЁ_]+/', $user_name);
+    }
+
+
+    try {
+        
+        if (empty($user_name) || !checkUserName($user_name)){
+            throw new Exception('Не указано (Не верно указано) имя'.$user_name );
         }
-    } else {
-        $_SESSION['message']= 'Неверно введено число';
+        
+        if (!checkEmail($email)){
+            throw new Exception('Неверный адрес эл.почты',1);
+        }
+        
+        if ($secret<>$_SESSION['secret']){
+            throw new Exception('Неверно введено число');
+        }        
+        
+//        if(!mail($to,$subject,$message,$headers)){
+//            throw new Exception('Упс. Почту не удалось отправить');
+//        }
+        
+        $_SESSION['message']='Соощение успешно оправлено';
+        
+    } catch (Exception $exc) {
+        $_SESSION['message'] = $exc->getMessage();
     }
     header('Location: ./');
+
+
 ?>
 
 
