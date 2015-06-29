@@ -70,6 +70,10 @@
             document.getElementById('fade').style.display='none';
         }
         
+        function setUserID(user_id){
+            var f = document.getElementById('confirm_restore_form');
+            f.user_id.value=user_id;
+        }
         function checkLink(link){
             <?php if (isset($_SESSION['user_id'])) { ?>
                 window.location.href = link;    
@@ -168,6 +172,7 @@
     <?php 
         $alpha ="0123456789";
         $secret = ""; 
+        $old_user_id;
         for($i=0;$i<5;$i++) {
             $secret.= $alpha[rand(0,strlen($alpha)-1)]; 
         }
@@ -176,6 +181,8 @@
         
 
     ?>
+    
+                
     <form class = "dialog_form" id = "register_form" method = "post" action = "register.php">
         <a class="btn_close" href="#" onclick="hideForm('register_form');">Закрыть</a>
         <b>Регистрация:</b> <br>
@@ -252,6 +259,8 @@
         </div>    
     </form>
     
+    <!-- Восстановление пароля -->
+    
     <form class="dialog_form" id="restore_form" action="restore.php" method="post">
         <a class="btn_close" href="#" onclick="hideForm('restore_form');">Закрыть</a>
         <b>Восстановление входа </b>
@@ -265,11 +274,12 @@
         </div>
     </form>
     
-    <form class="dialog_form" id="confirm_restore_form" action="confirm_restore" method="post">
+    <!-- Подтверждение восстановления пароля -->
+    <form class="dialog_form" id="confirm_restore_form" action="confirm_restore.php" method="post">
         <a class="btn_close" href="#" onclick="hideForm('confirm_restore_form')">Закрыть</a>
         <table>
            <tr> 
-                <td>Ид пользователя</td><td><input type="text" name="user_id" value=""></td>
+               <td>Ид пользователя</td><td><input type="text" name="user_id" ></td>
             </tr><tr>
                 <td>Новый пароль</td><td><input type="text" name="password1"></td>
             </tr><tr>
@@ -280,11 +290,20 @@
     </form>
 
     <div id="fade" class="fade_overlay"></div>
-
+    
     <?php
-        $resore = filter_input(INPUT_GET,'user_id');
-        if (!empty($resore)){
-            ?> <script>showForm('confirm_restore_form');</script> <?php
+        $old_user_id = filter_input(INPUT_GET,'user_id');
+        $old_pwd = filter_input(INPUT_GET, 'pwd');
+        if (!empty($old_user_id) && !empty($old_pwd)){
+            $query = 'select user_id from users where user_id=\''.$old_user_id.'\' and pwd=\''.$old_pwd.'\'';
+            $result = mysql_query($query);
+            if (mysql_num_rows($result)==1){
+                ?> <script>
+                    showForm('confirm_restore_form');
+                    setUserID(<?= $old_user_id; ?>)
+                                    </script> 
+                                    <?php
+            }
         }
     ?>
     
