@@ -173,6 +173,7 @@
         }
         session_id(md5(microtime()*rand())); 
         $_SESSION['secret']=$secret;
+        
 
     ?>
     <form class = "dialog_form" id = "register_form" method = "post" action = "register.php">
@@ -215,7 +216,7 @@
 
     <form class = "dialog_form" id = "message_form" action = "message.php" method="post">
         <a class="btn_close" href="#" onclick="hideForm('message_form');">Закрыть</a>
-        <table align="center" width="100%">
+        <table  width="100%">
                 <tr>
                         <td colspan="2">Тема</td>
                 </tr><tr>
@@ -223,7 +224,7 @@
                                            placeholder="Укажите тему (вопрос,пожелание, предложение и т.п.)">
                     </td>
                 </tr><tr>
-                        <td>Текст сообщения</td>
+                    <td colspan="2">Текст сообщения</td>
                 </tr><tr>
                     <td colspan="2"><textarea cols="50" rows="5" name="message" 
                                               placeholder="Кратко изложите суть сообщения"></textarea>
@@ -263,8 +264,29 @@
             </div>
         </div>
     </form>
+    
+    <form class="dialog_form" id="confirm_restore_form" action="confirm_restore" method="post">
+        <a class="btn_close" href="#" onclick="hideForm('confirm_restore_form')">Закрыть</a>
+        <table>
+           <tr> 
+                <td>Ид пользователя</td><td><input type="text" name="user_id" value=""></td>
+            </tr><tr>
+                <td>Новый пароль</td><td><input type="text" name="password1"></td>
+            </tr><tr>
+                <td>Новый пароль(ещё раз)</td><td><input type="text" name="password2"></td>
+            </tr>
+        </table>
+        <input type="submit" value="Изменить">
+    </form>
 
     <div id="fade" class="fade_overlay"></div>
-	
+
+    <?php
+        $resore = filter_input(INPUT_GET,'user_id');
+        if (!empty($resore)){
+            ?> <script>showForm('confirm_restore_form');</script> <?php
+        }
+    ?>
+    
 </body>
 </html>
