@@ -24,7 +24,8 @@
           email varchar(50) not null unique,
           pwd varchar(50) not null,
           last_name varchar(25),
-          first_name varchar(25)
+          first_name varchar(25),
+          reg_date datetime default now()
          );";
         if (mysql_query($query)){
             echo 'База успешно создана';

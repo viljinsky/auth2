@@ -88,6 +88,15 @@
    
     <?php 
         include_once './db.php';
+        
+        if (isset($_SESSION['message'])){
+            $info_message = $_SESSION['message'];
+        }
+        
+        if (isset($_SESSION['error'])){    
+            $error_message = $_SESSION['error'];
+        }
+        
         if (isset($_SESSION['message'])){
         $str='<form class="dialog_form" id="sysmessage">'
             .'<a href="#" class="btn_close" onclick="hideForm(\'sysmessage\');">Закрыть</a>'    
